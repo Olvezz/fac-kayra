@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kayra Full Party</title>
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">  
-  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
 
@@ -118,10 +116,7 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
       <div class="topbar-title" id="topbarTitle">Dashboard</div>
-      <div class="topbar-search">
-        <svg class="topbar-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="text" placeholder="Buscar..." id="globalSearch" oninput="handleSearch(this.value)">
-      </div>
+
     </header>
 
     <!-- ── DASHBOARD ── -->
@@ -224,10 +219,10 @@
         <div class="table-wrap">
           <table class="table">
             <thead>
-              <tr><th>Nombre</th><th>Teléfono</th><th>Email</th><th>Dirección</th><th>Acciones</th></tr>
+              <tr><th>Nombre</th><th>Teléfono</th><th>Dirección</th><th>Acciones</th></tr>
             </thead>
             <tbody id="clientesTbody">
-              <tr><td colspan="5" style="text-align:center;padding:40px"><div class="spinner" style="margin:auto"></div></td></tr>
+              <tr><td colspan="4" style="text-align:center;padding:40px"><div class="spinner" style="margin:auto"></div></td></tr>
             </tbody>
           </table>
         </div>
@@ -275,7 +270,7 @@
         <div class="table-wrap">
           <table class="table">
             <thead><tr><th>Fecha</th><th>Descripción</th><th>Categoría</th><th>Monto</th><th>Acciones</th></tr></thead>
-            <tbody id="gastosTbody"><tr><td colspan="5" style="text-align:center;padding:40px"><div class="spinner" style="margin:auto"></div></td></tr></tbody>
+            <tbody id="gastosTbody"><tr><td colspan="4" style="text-align:center;padding:40px"><div class="spinner" style="margin:auto"></div></td></tr></tbody>
           </table>
         </div>
       </div>
@@ -677,14 +672,13 @@ async function loadClientes(render = false) {
 function renderClientes() {
   const tbody = document.getElementById('clientesTbody');
   if (!clientes.length) {
-    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><h3>Sin clientes</h3><p>Agrega tu primer cliente</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><h3>Sin clientes</h3><p>Agrega tu primer cliente</p></div></td></tr>`;
     return;
   }
   tbody.innerHTML = clientes.map(c => `
     <tr>
-      <td><strong>${c.nombre}</strong>${c.cedula?`<br><small style="color:var(--text-secondary)">${c.cedula}</small>`:''}</td>
+      <td><strong>${c.nombre}</strong></td>
       <td>${c.telefono||'—'}</td>
-      <td>${c.email||'—'}</td>
       <td>${c.direccion||'—'}</td>
       <td>
         <div class="table-actions">
@@ -705,14 +699,8 @@ window.openClienteModal = function(fromCot = false, editId = null) {
   document.getElementById('modalBody').innerHTML = `
     <div class="form-group"><label>Nombre / Razón social *</label>
       <input class="input" id="fClienteNombre" value="${c?.nombre||''}" placeholder="Nombre completo" required></div>
-    <div class="form-row">
-      <div class="form-group"><label>Cédula / RNC</label>
-        <input class="input" id="fClienteCedula" value="${c?.cedula||''}" placeholder="000-0000000-0"></div>
-      <div class="form-group"><label>Teléfono</label>
-        <input class="input" id="fClienteTelefono" value="${c?.telefono||''}" placeholder="(809) 000-0000"></div>
-    </div>
-    <div class="form-group"><label>Email</label>
-      <input class="input" type="email" id="fClienteEmail" value="${c?.email||''}" placeholder="correo@ejemplo.com"></div>
+    <div class="form-group"><label>Teléfono (WhatsApp)</label>
+      <input class="input" id="fClienteTelefono" value="${c?.telefono||''}" placeholder="(809) 000-0000"></div>
     <div class="form-group"><label>Dirección</label>
       <input class="input" id="fClienteDireccion" value="${c?.direccion||''}" placeholder="Santo Domingo"></div>
     <div class="form-group"><label>Notas internas</label>
@@ -728,9 +716,8 @@ window.saveCliente = async function(editId) {
   const nombre = document.getElementById('fClienteNombre').value.trim();
   if (!nombre) { toast('El nombre es requerido','error'); return; }
   const data = {
-    nombre, cedula: document.getElementById('fClienteCedula').value.trim(),
+    nombre,
     telefono: document.getElementById('fClienteTelefono').value.trim(),
-    email: document.getElementById('fClienteEmail').value.trim(),
     direccion: document.getElementById('fClienteDireccion').value.trim(),
     notas: document.getElementById('fClienteNotas').value.trim(),
   };
@@ -1263,7 +1250,7 @@ window.loadGastos = async function() {
   document.getElementById('gastosSubtitle').textContent = mesVal || 'Todos';
   const tbody = document.getElementById('gastosTbody');
   if (!gastos.length) {
-    tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><h3>Sin gastos registrados</h3></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><h3>Sin gastos registrados</h3></div></td></tr>`;
     return;
   }
   tbody.innerHTML = gastos.map(g => `
@@ -1472,9 +1459,7 @@ document.getElementById('cotModal').addEventListener('click', e => {
   if (e.target === document.getElementById('cotModal')) closeCotModal();
 });
 
-window.handleSearch = function(val) {
-  // Básico: filtrar tabla activa por texto
-};
+
 
 </script>
 </body>
